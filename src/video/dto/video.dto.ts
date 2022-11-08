@@ -1,7 +1,5 @@
-// RedditRequest
-
 import { IsNotEmpty, IsUrl } from 'class-validator';
-
+// RedditRequest
 // a request to get reddit url response as json and return video urls
 export class RedditRequest {
   @IsUrl()
