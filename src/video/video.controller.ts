@@ -1,6 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { VideoService } from './video.service';
-import { RedditRequest } from './dto';
+import { RedditRequest, VideoRequest } from './dto';
 
 @Controller('video')
 export class VideoController {
@@ -8,6 +8,11 @@ export class VideoController {
 
   @Post('/')
   getVideoLinks(@Body() request: RedditRequest) {
+    return this.videoService.getLinks(request);
+  }
+
+  @Get('/')
+  getVideo(@Body() request: VideoRequest) {
     return this.videoService.getVideo(request);
   }
 }

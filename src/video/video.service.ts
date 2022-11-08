@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, Injectable } from '@nestjs/common';
-import { RedditData, RedditRequest } from './dto';
+import { RedditData, RedditRequest, VideoRequest } from './dto';
 import { getAudioUrl, getVideoUrls, toJsonUrl } from './utils';
 import { catchError, firstValueFrom } from 'rxjs';
 
@@ -8,7 +8,7 @@ import { catchError, firstValueFrom } from 'rxjs';
 export class VideoService {
   constructor(private readonly httpService: HttpService) {}
 
-  async getVideo(request: RedditRequest) {
+  async getLinks(request: RedditRequest) {
     const jsonLink = toJsonUrl(request.url);
 
     if (jsonLink instanceof HttpException) {
@@ -30,5 +30,9 @@ export class VideoService {
       videoLinks,
       audioLink: getAudioUrl(redditData),
     };
+  }
+
+  async getVideo(request: VideoRequest) {
+    return request;
   }
 }
