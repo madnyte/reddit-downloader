@@ -12,8 +12,8 @@ export class RedditRequest {
 export class VideoRequest {
   @IsUrl()
   @IsNotEmpty()
-  url: string;
+  videoUrl: string;
 
   @IsUrl()
-  audio?: string;
+  audioUrl?: string;
 }

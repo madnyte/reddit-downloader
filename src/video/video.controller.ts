@@ -1,6 +1,15 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Res,
+  ValidationPipe,
+} from '@nestjs/common';
 import { VideoService } from './video.service';
 import { RedditRequest, VideoRequest } from './dto';
+import { Response } from 'express';
 
 @Controller('video')
 export class VideoController {
@@ -12,7 +21,17 @@ export class VideoController {
   }
 
   @Get('/')
-  getVideo(@Body() request: VideoRequest) {
-    return this.videoService.getVideo(request);
+  getVideo(
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: { enableImplicitConversion: true },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    query: VideoRequest,
+    @Res() response: Response,
+  ) {
+    return this.videoService.getVideo(query, response);
   }
 }
