@@ -1,12 +1,18 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
-import { VideoRequest } from './dto';
+import { HttpException, Injectable } from '@nestjs/common';
+import { RedditRequest } from './dto';
+import { toJsonUrl } from './utils';
 
 @Injectable()
 export class VideoService {
   constructor(private readonly httpService: HttpService) {}
 
-  getVideo(request: VideoRequest) {
-    return request;
+  getVideo(request: RedditRequest) {
+    const jsonLink = toJsonUrl(request.url);
+
+    if (jsonLink instanceof HttpException) {
+      return jsonLink;
+    }
+    return jsonLink;
   }
 }
