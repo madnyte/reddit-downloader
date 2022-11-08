@@ -3,6 +3,8 @@ import { Url } from 'url';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { RedditData } from '../dto';
 
+// takes in a url string and converts it to url type
+// then checks if it is a valid reddit url
 export function toJsonUrl(urlString: string): HttpException | string {
   const link: Url = url.parse(urlString);
 
@@ -27,6 +29,7 @@ export function toJsonUrl(urlString: string): HttpException | string {
   return `https://${link.host}${link.pathname}.json`;
 }
 
+// get a list of video urls of different quality from highest to lowest
 export function getVideoUrls(data: RedditData): string[] {
   const defaultUrl: string = data.secure_media.reddit_video.fallback_url;
   const videoHeight: number = data.secure_media.reddit_video.height;
@@ -35,13 +38,15 @@ export function getVideoUrls(data: RedditData): string[] {
     return defaultUrl.replace(new RegExp('DASH_[0-9]+'), `DASH_${height}`);
   });
 }
-
+// get link for audio
 export function getAudioUrl(data: RedditData): string {
   const defaultUrl: string = data.secure_media.reddit_video.fallback_url;
 
   return defaultUrl.replace(new RegExp('DASH_[0-9]+'), 'DASH_audio');
 }
 
+// get height of video and returns a list of video heights below it
+// 720 - for hd video and so on
 export function videoHeights(height: number): number[] {
   switch (height) {
     case 1080:
@@ -56,7 +61,7 @@ export function videoHeights(height: number): number[] {
       return [height];
   }
 }
-
+// create a random file name
 export function makeid(length) {
   let result = '';
   const characters =
