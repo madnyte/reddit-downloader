@@ -1,30 +1,61 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+/# Reddit Downloader
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This is a simple application built using NestJs to download videos from reddit.
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Reddit has different ways of storing their videos. Videos without audio are stored in one place while audio is stored in a different location.
+The goal of this application is to get both medias put them together and serve the original video with sound to the user.
+
+1. The first step is to get a reddit video link, which one can get by using the share feature of reddit.
+2. After getting the link we append ".json" to the end and visiting the link to get a json response.
+3. From the json response we can the get access to the reddit video and audio links.
+4. After getting the links we download the files and put them together using [ffmpeg](https://ffmpeg.org/) package.
+
+The server has 2 endpoints.
+* one for getting reddit link and creating video and audio links for different quality videos.
+* the other for getting a download link and audio link and putting the 2 together.
+
+## Rest Api
+
+### Request
+`POST /video`
+
+    curl -i -H 'Accept: application/json' -d 'url=https://reddit.com/videolink' http://localhost:4000/video/
+
+### Response
+    HTTP/1.1 201 Created
+    Date: Tue, 08 Nov 2022 21:50:21 CAT
+    Status: 201 Created
+    Connection: keep-alive
+    Content-Type: application/json
+    Location: /video/
+    Content-Length: 282
+
+    {
+        "videoLinks": [
+            "https://v.redd.it/ph1jjtteyly91/DASH_480.mp4?source=fallback",
+            "https://v.redd.it/ph1jjtteyly91/DASH_360.mp4?source=fallback",
+            "https://v.redd.it/ph1jjtteyly91/DASH_240.mp4?source=fallback"
+        ],
+        "audioLink": "https://v.redd.it/ph1jjtteyly91/DASH_audio.mp4?source=fallback"
+    }
+
+### Request
+`GET /video`
+
+    curl -i -H 'Accept: application/json' http://localhost:4000/video?videoUrl=https://v.redd.it/ph1jjtteyly91/DASH_480.mp4?source=fallback&audioUrl=https://v.redd.it/ph1jjtteyly91/DASH_audio.mp4?source=fallback
+
+### Response
+    HTTP/1.1 200 OK
+    Access-Control-Allow-Origin: *
+    Content-Type: application/octet-stream
+    Content-Disposition: attachment; filename=eRl500zcSVlb3FEuHrq5Y8dzF541o7.mp4
+    Content-Length: 694226
+    Content-Transfer-Encoding: Binary
+    Date: Tue, 08 Nov 2022 21:54:49 GMT
+    Connection: keep-alive
+    Keep-Alive: timeout=5
 
 ## Installation
 
@@ -44,30 +75,3 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
