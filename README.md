@@ -1,4 +1,4 @@
-/# Reddit Downloader
+# Reddit Downloader
 
 This is a simple application built using NestJs to download videos from reddit.
 
